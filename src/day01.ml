@@ -6,7 +6,7 @@ let execute_rotation (pos: int) ((dir, rot): (char * int)) : (int * int) =
                        then 1 else 0
   in match dir with
      | 'L' -> let new_pos = (pos - rot) in
-              new_pos mod 100, abs(new_pos / 100) + (cross_0 pos new_pos)
+              new_pos mod 100, abs (new_pos / 100) + (cross_0 pos new_pos)
      | 'R' -> let new_pos = (pos + rot) in
               new_pos mod 100, new_pos / 100 + (cross_0 pos new_pos)
      | _ -> failwith "invalid instruction"
@@ -19,5 +19,4 @@ let count_0 (position: int) (instructions: (char * int) list) : (int * int) =
                 | p, past_zero -> aux
                                     (if p = 0 then acc1 + 1 else acc1)
                                     (acc2 + past_zero)p t
-  in
-  aux 0 0 position instructions
+  in aux 0 0 position instructions
