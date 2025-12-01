@@ -3,7 +3,7 @@ open Aoc
 let day_01 =
   let read_t, data = Timer.timed_excecution
                (fun _ -> Reader.read_and_process_lines
-                           "data/test.txt"
+                           "data/d1.txt"
                            Day01.parse_rotation)
   in
   let p1_t, (res_1, res_2) =

@@ -4,9 +4,8 @@ let parse_rotation (line: string): char * int =
 let execute_rotation (pos: int) ((dir, rot): (char * int)) : (int * int) =
   let directional_rotation = if dir = 'L' then (- rot) else rot in
   let turned_position = pos + directional_rotation in
-  let past_zero = (turned_position > 99 || turned_position < 1) && not (pos = 0)
-  in
-  let times_past_zero = (if past_zero then 1 else 0) + rot / 100 in
+  let times_past_zero = (if turned_position <= 0 then 1 else 0) +
+                          (abs ((pos + directional_rotation) / 100)) in
   print_int pos;
   print_string "\t";
   print_int directional_rotation;
