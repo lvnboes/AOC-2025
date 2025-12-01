@@ -2,19 +2,29 @@ let parse_rotation (line: string): char * int =
   Scanf.sscanf line "%c%d" (fun c d -> (c, d))
 
 let execute_rotation (pos: int) ((dir, rot): (char * int)) : (int * int) =
-  let directional_rotation = if dir = 'L' then (- rot) else rot in
-  let turned_position = pos + directional_rotation in
-  let times_past_zero = (if turned_position <= 0 then 1 else 0) +
-                          (abs ((pos + directional_rotation) / 100)) in
+  let new_position, on_zero_count = match dir with
+    | 'L' -> let raw_rotated = pos - rot in
+             let past_zero = raw_rotated <= 0 in
+             let new_pos_raw = raw_rotated mod 100 < 0 in
+             let new_pos = raw_rotated mod 100 + (if new_pos_raw then 100 else 0) in
+             let count_start = if past_zero && pos <> 0 then 1 else 0 in
+             let zero_count = count_start + abs ((pos - rot) / 100) in
+             new_pos, zero_count
+    | 'R' -> (pos + rot) mod 100, (pos + rot) / 100
+    | _ -> failwith "invalid instruction"
+  in
   print_int pos;
   print_string "\t";
-  print_int directional_rotation;
+  print_char dir;
   print_string "\t";
-  print_int ((turned_position mod  100) + (if (turned_position mod 100) < 0 then 100 else 0));
+  print_int rot;
   print_string "\t";
-  print_int times_past_zero; print_newline ();
-  (turned_position mod  100) + (if (turned_position mod 100) < 0 then 100 else 0),
-  times_past_zero
+  print_int new_position;
+  print_string "\t";
+  print_int on_zero_count;
+  print_newline ();
+  new_position, on_zero_count
+  
 
 let count_0 (position: int) (instructions: (char * int) list) : (int * int) =
   let rec aux acc1 acc2 pos instr =
