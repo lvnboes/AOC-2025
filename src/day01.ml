@@ -3,11 +3,11 @@ type dir = L | R
 let parse_rotation (line : string) : dir * int =
   Scanf.sscanf line "%c%d" (fun c d -> ((if c = 'L' then L else R), d))
 
-let execute_rotation (pos : int) ((dir, rot) : dir * int) : int * int =
+let execute_rotation (pos : int) ((dr, rot) : dir * int) : int * int =
   let cross_0 old nw =
     if (old < 0 && nw >= 0) || (old > 0 && nw <= 0) then 1 else 0
   in
-  match dir with
+  match dr with
   | L ->
       let new_pos = pos - rot in
       (new_pos mod 100, abs (new_pos / 100) + cross_0 pos new_pos)
