@@ -16,12 +16,14 @@ let execute_rotation (pos : int) ((dr, rot) : dir * int) : int * int =
       (new_pos mod 100, (new_pos / 100) + cross_0 pos new_pos)
 
 let count_0 (position : int) (instructions : (dir * int) list) : int * int =
-  let rec aux acc1 acc2 pos instr =
+  let rec aux acc1 acc2 position instr =
     match instr with
     | [] -> (acc1, acc2)
-    | h :: t -> (
-        match execute_rotation pos h with
-        | p, past_zero ->
-            aux (if p = 0 then acc1 + 1 else acc1) (acc2 + past_zero) p t)
+    | instruction :: t -> (
+        match execute_rotation position instruction with
+        | new_position, past_zero ->
+            aux
+              (if new_position = 0 then acc1 + 1 else acc1)
+              (acc2 + past_zero) new_position t)
   in
   aux 0 0 position instructions
