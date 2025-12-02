@@ -19,10 +19,10 @@ let count_0 (position : int) (instructions : (dir * int) list) : int * int =
   let rec aux acc1 acc2 position instrs =
     match instrs with
     | [] -> (acc1, acc2)
-    | instruction :: t ->
+    | instruction :: tail ->
         let new_position, past_zero = execute_rotation position instruction in
         aux
           (if new_position = 0 then acc1 + 1 else acc1)
-          (acc2 + past_zero) new_position t
+          (acc2 + past_zero) new_position tail
   in
   aux 0 0 position instructions
