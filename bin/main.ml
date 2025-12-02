@@ -13,10 +13,11 @@ let day_01 =
 let day_02 =
   let read_t, data =
     Timer.timed_excecution (fun _ ->
-        Reader.read_split_and_process_file "data/test.txt" [","]
+        Reader.read_split_and_process_file "data/d2.txt" [","]
           Day02.read_id_range)
   in
-  read_t, data
+  let part_1 = Timer.timed_excecution (fun _ -> Day02.solve_1 data) in
+  Printer.print_day 2 read_t part_1 (0., 0)
 
   let () = day_01;
            ignore day_02
