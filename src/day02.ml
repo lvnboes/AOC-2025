@@ -58,13 +58,17 @@ let repeat_pattern n times size =
   aux 0 n times
 
 (*get all n times repeated paterns of a specific size between n and max*)
-let rec repeat_patterns_of_size acc n times size max =
-  if (count_id_digits n) > size || n > max
+let rec repeat_patterns_of_size acc n times p_size upper =
+  (* print_string "N "; print_int n; print_newline (); *)
+  (* print_string "T "; print_int times; print_newline (); *)
+  (* print_string "S "; print_int p_size; print_newline (); *)
+  (* print_string "U "; print_int upper; print_newline (); *)
+  if (count_id_digits n) > p_size || n > upper
   then acc
-  else let next = repeat_pattern n times size in
-       if next > max
+  else let next = repeat_pattern n times p_size in
+       if next > upper
        then acc
-       else repeat_patterns_of_size (next :: acc) (n + 1) times size max
+       else repeat_patterns_of_size (next :: acc) (n + 1) times p_size upper
 
 (*determine lowest pattern of a specific size that when repeated to an integer
  of the same order of magnitude as number n is bigger tnan n*)
@@ -89,3 +93,42 @@ let lowest_pattern n size =
   match patterns with
   | first :: rest -> if has_higher first rest then first + 1 else first
   | _ -> failwith "invalid grouping"
+
+(*all invalid ids between lower and upper limit*)
+let invalid_all_pattern_sizes_in_range acc lower upper =
+  let rec aux acc n p_size size lower upper =
+    if p_size = size / 2
+    then repeat_patterns_of_size acc n (size / p_size) p_size upper
+    else if size mod p_size = 0
+    then (print_string "E1"; aux (repeat_patterns_of_size acc n (size / p_size) p_size upper)
+           (lowest_pattern lower (p_size + 1)) (p_size + 1) size lower upper)
+    else (print_string "E2"; aux acc (lowest_pattern lower (p_size + 1)) (p_size + 1) size lower upper)
+  in
+  let size = count_id_digits lower in
+  let min_n = lowest_pattern lower 1 in
+  aux acc min_n 1 size lower upper
+
+(*split range in chuncks of the same order of magnitude*)
+let rec split_range acc a b =
+  let size_lower = count_id_digits a in
+  let new_top = (i_pow 10 size_lower) in
+  if new_top > b then ((a, b) :: acc)
+  else  split_range ((a, new_top - 1) :: acc) new_top b
+
+(*split range and get all repeat patterns*)
+let all_invalid_in_range acc lower upper =
+  let rec aux acc ranges =
+    match ranges with
+    | [] -> acc
+    | (lower, upper) :: rest ->
+       print_int lower; print_string " | "; print_int upper; print_newline ();
+       aux (invalid_all_pattern_sizes_in_range acc lower upper) rest
+  in
+  let ranges = split_range [] lower upper in
+  aux acc ranges
+
+(* let rec all_invalid_in_all_ranges acc ranges = *)
+(*   match ranges with *)
+(*   | [] -> acc *)
+(*   |  *)
+ 
