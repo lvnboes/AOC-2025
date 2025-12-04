@@ -59,10 +59,6 @@ let repeat_pattern n times size =
 
 (*get all n times repeated paterns of a specific size between n and max*)
 let rec repeat_patterns_of_size acc n times p_size upper =
-  (* print_string "N "; print_int n; print_newline (); *)
-  (* print_string "T "; print_int times; print_newline (); *)
-  (* print_string "S "; print_int p_size; print_newline (); *)
-  (* print_string "U "; print_int upper; print_newline (); *)
   if (count_id_digits n) > p_size || n > upper
   then acc
   else let next = repeat_pattern n times p_size in
@@ -99,9 +95,12 @@ let invalid_all_pattern_sizes_in_range acc lower upper =
   let rec aux acc n p_size size lower upper =
     if p_size = size / 2
     then repeat_patterns_of_size acc n (size / p_size) p_size upper
+    else if (p_size + 1) > (size / 2)
+    then acc     
     else if size mod p_size = 0
-    then (print_string "E1"; aux (repeat_patterns_of_size acc n (size / p_size) p_size upper)
-           (lowest_pattern lower (p_size + 1)) (p_size + 1) size lower upper)
+    then (print_string "E1 "; print_int lower; print_string "-"; print_int (p_size + 1); print_newline ();
+          aux (repeat_patterns_of_size acc n (size / p_size) p_size upper)
+           (lowest_pattern lower (p_size + 1)) (p_size + 1) size lower upper)   (*TODO: move determining lowest pattern to repeat_paterns_of_size so we don't have to determine in advance. This causes infinite loop issues*)
     else (print_string "E2"; aux acc (lowest_pattern lower (p_size + 1)) (p_size + 1) size lower upper)
   in
   let size = count_id_digits lower in
