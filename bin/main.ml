@@ -17,7 +17,8 @@ let day_02 =
           Day02.read_id_range)
   in
   let part_1 = Timer.timed_excecution (fun _ -> Day02.solve_1 data) in
-  Printer.print_day 2 read_t part_1 (0., 0)
+  let part_2 = Timer.timed_excecution (fun _ -> Day02.solve_2 data) in
+  Printer.print_day 2 read_t part_1 part_2
 
   let () = day_01;
            ignore day_02

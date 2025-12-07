@@ -47,25 +47,6 @@ let invalid_in_all_ranges (ranges: (int * int) list) : int list =
 let solve_1 (input: (int * int) list) : int =
   List.fold_left ( + ) 0 (invalid_in_all_ranges input)
 
-
-
-(*repeat a patttern n of a specific size a specific number of times*)
-let repeat_pattern n times size = 
-  let rec aux acc n times = 
-    if times = 0 then acc
-    else aux (acc + n) ((i_pow 10 size) * n) (times - 1)
-  in
-  aux 0 n times
-
-(*get all n times repeated paterns of a specific size between n and max*)
-let rec repeat_patterns_of_size acc n times p_size upper =
-  if (count_id_digits n) > p_size || n > upper
-  then acc
-  else let next = repeat_pattern n times p_size in
-       if next > upper
-       then acc
-       else repeat_patterns_of_size (next :: acc) (n + 1) times p_size upper
-
 (*determine lowest pattern of a specific size that when repeated to an integer
  of the same order of magnitude as number n is bigger tnan n*)
 let group_digits n size =
@@ -82,30 +63,49 @@ let lowest_pattern n size =
   let patterns = group_digits n size in
   let rec has_higher x lst =
     match lst with
-    | [] -> false
     | h :: _ when h > x -> true
-    | _ :: t -> has_higher x t
+    | h :: t when h = x -> has_higher x t
+    | _ -> false
   in
-  match patterns with
+  let result = match patterns with
   | first :: rest -> if has_higher first rest then first + 1 else first
   | _ -> failwith "invalid grouping"
+  in
+  result
+
+(*repeat a patttern n of a specific size a specific number of times*)
+let repeat_pattern n times size =
+  let rec aux acc n times = 
+    if times = 0 then acc
+    else aux (acc + n) ((i_pow 10 size) * n) (times - 1)
+  in
+  aux 0 n times
+
+(*get all n times repeated paterns of a specific size between n and max*)
+let repeat_patterns_of_size acc times p_size lower upper =
+  let start_pattern = lowest_pattern lower p_size in
+  let rec aux acc n times p_size upper =
+    if (count_id_digits n) > p_size || n > upper
+    then acc
+    else let next = repeat_pattern n times p_size in
+         if next > upper
+         then acc
+         else aux (next :: acc) (n + 1) times p_size upper
+  in
+  aux acc start_pattern times p_size upper
 
 (*all invalid ids between lower and upper limit*)
 let invalid_all_pattern_sizes_in_range acc lower upper =
-  let rec aux acc n p_size size lower upper =
-    if p_size = size / 2
-    then repeat_patterns_of_size acc n (size / p_size) p_size upper
-    else if (p_size + 1) > (size / 2)
-    then acc     
+  let rec aux acc p_size size lower upper =
+    if p_size > (size / 2) then acc     
     else if size mod p_size = 0
-    then (print_string "E1 "; print_int lower; print_string "-"; print_int (p_size + 1); print_newline ();
-          aux (repeat_patterns_of_size acc n (size / p_size) p_size upper)
-           (lowest_pattern lower (p_size + 1)) (p_size + 1) size lower upper)   (*TODO: move determining lowest pattern to repeat_paterns_of_size so we don't have to determine in advance. This causes infinite loop issues*)
-    else (print_string "E2"; aux acc (lowest_pattern lower (p_size + 1)) (p_size + 1) size lower upper)
+    then aux
+           (repeat_patterns_of_size acc (size / p_size) p_size lower upper)
+           (p_size + 1) size lower upper
+    else  aux acc (p_size + 1) size lower upper
   in
   let size = count_id_digits lower in
-  let min_n = lowest_pattern lower 1 in
-  aux acc min_n 1 size lower upper
+  aux acc 1 size lower upper
 
 (*split range in chuncks of the same order of magnitude*)
 let rec split_range acc a b =
@@ -119,15 +119,26 @@ let all_invalid_in_range acc lower upper =
   let rec aux acc ranges =
     match ranges with
     | [] -> acc
-    | (lower, upper) :: rest ->
-       print_int lower; print_string " | "; print_int upper; print_newline ();
-       aux (invalid_all_pattern_sizes_in_range acc lower upper) rest
+    | (lower, upper) :: rest -> (
+      aux (invalid_all_pattern_sizes_in_range acc lower upper) rest)
   in
   let ranges = split_range [] lower upper in
   aux acc ranges
 
-(* let rec all_invalid_in_all_ranges acc ranges = *)
-(*   match ranges with *)
-(*   | [] -> acc *)
-(*   |  *)
- 
+(*loop over all ranges and get all ids with repeated patterns*)
+module IntSet = Set.Make(Int)
+
+let remove_duplicates invalid_ids = IntSet.elements (IntSet.of_list invalid_ids)
+
+let all_invalid_in_all_ranges (ranges: (int * int) list) : int list =
+  let rec aux acc ranges =
+    match ranges with
+    | [] -> List.rev acc
+    | (lower, upper) :: tail ->
+       aux (all_invalid_in_range acc lower upper) tail
+  in
+  let all_invalid = aux [] ranges in
+  remove_duplicates all_invalid
+
+let solve_2 (input: (int * int) list) : int =
+  List.fold_left ( + ) 0 (all_invalid_in_all_ranges input)
