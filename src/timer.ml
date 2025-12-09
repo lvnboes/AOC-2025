@@ -1,4 +1,4 @@
-let timed_excecution f =
+let timed_execution f =
   let t_start = Unix.gettimeofday () in
   let result = f() in
   let t_end = Unix.gettimeofday () in
