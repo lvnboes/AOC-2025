@@ -1,4 +1,4 @@
-let parse_joltages line =
+let parse_joltages (line : string) : int list =
   line |> String.to_seq
   |> Seq.map (fun c -> Char.(code c - code '0'))
   |> List.of_seq
