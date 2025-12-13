@@ -15,10 +15,10 @@ let padd_matrix (matrix : int list list) =
   let matrix_padding = List.init (matrix_width + 2) (fun _ -> 0) in
   padd_with matrix matrix_padding (fun row -> padd_with row 0 (fun x -> x))
 
-let clean_row (before : int list) (self : int list) (next : int list)
+let clean_row (before : int list) (row : int list) (next : int list)
     (count : int) : int list * int =
-  let rec aux acc count before self next =
-    match (before, self, next) with
+  let rec aux acc count before row next =
+    match (before, row, next) with
     | ( a :: (b :: c :: _ as t1),
         d :: (e :: f :: _ as t2),
         g :: (h :: i :: _ as t3) ) ->
@@ -27,7 +27,7 @@ let clean_row (before : int list) (self : int list) (next : int list)
         else aux (e :: acc) count t1 t2 t3
     | _ -> (0 :: acc, count)
   in
-  aux [ 0 ] count before self next
+  aux [ 0 ] count before row next
 
 let clean_magazine (matrix : int list list) (count : int) : int list list * int
     =
