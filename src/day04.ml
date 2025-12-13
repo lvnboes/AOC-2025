@@ -29,7 +29,7 @@ let clean_row (before : int list) (row : int list) (next : int list)
   in
   aux [ 0 ] count before row next
 
-let clean_magazine (matrix : int list list) (count : int) : int list list * int
+let clean_warehouse (matrix : int list list) (count : int) : int list list * int
     =
   let matrix_width = match matrix with [] -> 0 | h :: _ -> List.length h in
   let matrix_padding = List.init matrix_width (fun _ -> 0) in
@@ -44,7 +44,7 @@ let clean_magazine (matrix : int list list) (count : int) : int list list * int
 let rec solve (matrix : int list list) (count : int) (rounds : int) =
   if rounds = 0 then count
   else
-    let upd_matrix, upd_count = clean_magazine matrix count in
+    let upd_matrix, upd_count = clean_warehouse matrix count in
     if count = upd_count then upd_count
     else solve upd_matrix upd_count (rounds - 1)
 
