@@ -1,6 +1,3 @@
-let sort_ranges (ranges : (int * int) list) : (int * int) list =
-  List.sort (fun (s1, _) (s2, _) -> compare s1 s2) ranges
-
 let overlap (s1, e1) (s2, e2) = not (e1 < s2 || e2 < s1)
 
 let consolidate_sorted_ranges (ranges : (int * int) list) : (int * int) list =
@@ -29,7 +26,8 @@ let process_ingr_input (input : string) : (int * int) list * int list =
   in
   let fresh_ranges =
     process_ranges (String.split_on_char '\n' fresh)
-    |> sort_ranges |> consolidate_sorted_ranges
+    |> List.sort (fun (s1, _) (s2, _) -> compare s1 s2)
+    |> consolidate_sorted_ranges
   in
   let ingredients_lst =
     List.map int_of_string String.(split_on_char '\n' (trim ingredients))
