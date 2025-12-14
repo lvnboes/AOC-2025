@@ -36,7 +36,18 @@ let day_04 =
   let part_2 = Timer.timed_execution (fun _ -> Day04.solve_2 data) in
   Printer.print_day 4 read_t part_1 part_2
 
-  let () = day_01;
-           day_02;
-           day_03;
-           day_04
+let day_05 =
+  let read_t, data =
+    Timer.timed_execution (fun _ ->
+        Reader.read_and_process_file "data/d5.txt" Day05.process_ingr_input)
+  in
+  let part_1 = Timer.timed_execution (fun _ -> Day05.solve_1 data) in
+  let part_2 = Timer.timed_execution (fun _ -> Day05.solve_2 data) in
+  Printer.print_day 5 read_t part_1 part_2
+
+let () =
+  day_01;
+  day_02;
+  day_03;
+  day_04;
+  day_05
