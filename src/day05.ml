@@ -1,19 +1,9 @@
-let rec insert ((s : int), (e : int)) (ranges : (int * int) list) :
-    (int * int) list =
-  match ranges with
-  | [] -> [ (s, e) ]
-  | (sr, er) :: t when s < sr -> (s, e) :: (sr, er) :: t
-  | h :: t -> h :: insert (s, e) t
-
-let sort (ranges : (int * int) list) : (int * int) list =
-  let rec aux acc ranges =
-    match ranges with [] -> acc | h :: t -> aux (insert h acc) t
-  in
-  aux [] ranges
+let sort_ranges (ranges : (int * int) list) : (int * int) list =
+  List.sort (fun (s1, _) (s2, _) -> compare s1 s2) ranges
 
 let overlap (s1, e1) (s2, e2) = not (e1 < s2 || e2 < s1)
 
-let consolidate_sorted (ranges : (int * int) list) : (int * int) list =
+let consolidate_sorted_ranges (ranges : (int * int) list) : (int * int) list =
   let rec aux acc ranges =
     match ranges with
     | [] -> acc
@@ -39,7 +29,7 @@ let process_ingr_input (input : string) : (int * int) list * int list =
   in
   let fresh_ranges =
     process_ranges (String.split_on_char '\n' fresh)
-    |> sort |> consolidate_sorted
+    |> sort_ranges |> consolidate_sorted_ranges
   in
   let ingredients_lst =
     List.map int_of_string String.(split_on_char '\n' (trim ingredients))
