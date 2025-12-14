@@ -15,14 +15,14 @@ let consolidate_sorted_ranges (ranges : (int * int) list) : (int * int) list =
   aux [] ranges
 
 let process_ingr_input (input : string) : (int * int) list * int list =
+  let rec process_ranges = function
+    | [] -> []
+    | h :: t -> Scanf.sscanf h "%d-%d" (fun s e -> (s, e)) :: process_ranges t
+  in
   let fresh, ingredients =
     match Str.(split (regexp "\n\n") input) with
     | [ fresh; ingredients ] -> (fresh, ingredients)
     | _ -> failwith "invalid input"
-  in
-  let rec process_ranges = function
-    | [] -> []
-    | h :: t -> Scanf.sscanf h "%d-%d" (fun s e -> (s, e)) :: process_ranges t
   in
   let fresh_ranges =
     process_ranges (String.split_on_char '\n' fresh)
