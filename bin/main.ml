@@ -34,7 +34,7 @@ let day_04 =
   in
   let part_1 = Timer.timed_execution (fun _ -> Day04.solve_1 data) in
   let part_2 = Timer.timed_execution (fun _ -> Day04.solve_2 data) in
-  Printer.print_day 3 read_t part_1 part_2
+  Printer.print_day 4 read_t part_1 part_2
 
   let () = day_01;
            day_02;
